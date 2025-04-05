@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "title": "Wiedźmin => test aktualizacji",
+    "author": "Andrzej Sapkowski",
+    "isRented": false
+  },
+  {
+    "id": 2,
+    "title": "Hobbit",
+    "author": "J.R.R. Tolkien",
+    "isRented": false
+  },
+  {
+    "id": 4,
+    "title": "we",
+    "author": "J.R.R. Tedien",
+    "isRented": false
+  }
+]
