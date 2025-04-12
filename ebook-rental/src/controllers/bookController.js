@@ -1,79 +1,67 @@
-const fs = require("fs");
-const path = require("path");
-const dataPath = path.join(__dirname, "../../data.json");
+const Book = require("../models/Book");
 
-const saveData = (data) => {
-  fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
-};
 
 exports.getAllBooks = (req, res) => {
   try {
-    const rawData = fs.readFileSync(dataPath);
-    const books = JSON.parse(rawData);
+    const books = Book.getAll();
     res.json(books);
   } catch (error) {
-    console.error("Szczegóły błędu:", error.message); // Dodaj tę linię!
-    res.status(500).json({ error: "Błąd odczytu danych" });
+    console.error("Błąd getAllBooks:", error.message);
+    res.status(500).json({ error: "Błąd pobierania książek" });
   }
 };
 
 exports.addBook = (req, res) => {
   try {
-    const rawData = fs.readFileSync(dataPath);
-    const books = JSON.parse(rawData);
-    
-    const newBook = req.body;
-    books.push(newBook);
-    
-    saveData(books);
+    const { title, author } = req.body;
+
+    if (!title || !author) {
+      return res.status(400).json({ error: "Brakuje tytułu lub autora" });
+    }
+
+    const newBook = Book.create({ title, author });
     res.status(201).json(newBook);
   } catch (error) {
+    console.error("Błąd addBook:", error.message);
     res.status(500).json({ error: "Błąd dodawania książki" });
   }
 };
-  
-  exports.deleteBook = (req, res) => {
-    try {
-      const rawData = fs.readFileSync(dataPath);
-      let books = JSON.parse(rawData);
-      
-      const bookId = parseInt(req.params.id);
-      const initialLength = books.length;
-      
-      books = books.filter(book => book.id !== bookId);
-      
-      if (books.length === initialLength) {
-        return res.status(404).json({ error: "Książka nie znaleziona" });
-      }
-      
-      saveData(books);
-      res.json({ message: "Książka usunięta pomyślnie" });
-    } catch (error) {
-      res.status(500).json({ error: "Błąd usuwania książki" });
+
+exports.updateBook = (req, res) => {
+  try {
+    const bookId = parseInt(req.params.id);
+    const updates = req.body;
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: "Brak danych do aktualizacji" });
     }
-  };
-  
-  exports.updateBook = (req, res) => {
-    try {
-      const rawData = fs.readFileSync(dataPath);
-      let books = JSON.parse(rawData);
-      
-      const bookId = parseInt(req.params.id);
-      const bookIndex = books.findIndex(book => book.id === bookId);
-      
-      if (bookIndex === -1) {
-        return res.status(404).json({ error: "Książka nie znaleziona" });
-      }
-      
-      // Aktualizuj tylko przesłane pola
-      books[bookIndex] = { 
-        ...books[bookIndex], 
-        ...req.body 
-      };
-      
-      saveData(books);
-      res.json(books[bookIndex]);
-    } catch (error) {
-      res.status(500).json({ error: "Błąd aktualizacji książki" });
+
+    const updatedBook = Book.update(bookId, updates);
+
+    if (!updatedBook) {
+      return res.status(404).json({ error: "Książka nie znaleziona" });
     }
-  };
+
+    res.json(updatedBook);
+  } catch (error) {
+    console.error("Błąd updateBook:", error.message);
+    res.status(500).json({ error: "Błąd aktualizacji książki" });
+  }
+};
+
+exports.deleteBook = (req, res) => {
+  try {
+    const bookId = parseInt(req.params.id);
+    const book = Book.getById(bookId);
+
+    if (!book) {
+      return res.status(404).json({ error: "Książka nie znaleziona" });
+    }
+
+    Book.delete(bookId);
+    res.json({ message: "Książka została usunięta" });
+  } catch (error) {
+    console.error("Błąd deleteBook:", error.message);
+    res.status(500).json({ error: "Błąd usuwania książki" });
+  }
+};

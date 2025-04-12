@@ -1,6 +1,11 @@
+const { initDB } = require('./database/db');
+initDB(); //db initialization
+
 const express = require("express");
 const app = express();
 const bookRoutes = require("./routes/bookRoutes");
+
+
 
 // middleware do parsowania JSON
 app.use(express.json());
