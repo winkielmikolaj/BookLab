@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Książki</title>
+  <style>
+    body { font-family: Arial; margin: 2rem; }
+    ul { list-style: none; padding: 0; }
+    li { margin-bottom: 0.5rem; }
+    button { margin-left: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Lista książek</h1>
+  <!-- jedna lista o ID zgodnym ze skryptem -->
+  <ul id="bookList"></ul>
+
+  <h2>Dodaj książkę</h2>
+  <form id="bookForm">
+    <input type="text" id="title" placeholder="Tytuł" required />
+    <input type="text" id="author" placeholder="Autor" required />
+    <button type="submit">Dodaj</button>
+  </form>
+
+  <!-- skrypt w public musi być tu: -->
+  <script src="script.js"></script>
+</body>
+</html>
